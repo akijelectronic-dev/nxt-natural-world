@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="author" content="AL-AMIN">
+<title>NXT NATURAL WORLD — AL-AMIN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SPLASH SCREEN -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="splash">
+  <div class="splash-bg"></div>
+  <div class="splash-content">
+    <div class="splash-logo">
+      <div class="logo-sun"></div>
+      <div class="logo-world">
+        <div class="logo-mountain m1"></div>
+        <div class="logo-mountain m2"></div>
+        <div class="logo-mountain m3"></div>
+        <div class="logo-tree t1"></div>
+        <div class="logo-tree t2"></div>
+        <div class="logo-house"></div>
+      </div>
+    </div>
+    <h1 class="splash-title">NXT NATURAL WORLD</h1>
+    <p class="splash-sub">A Living Digital Reality</p>
+    <div class="splash-owner">
+      <i class="fas fa-user-astronaut"></i>
+      <span>Visitor: <b>AL-AMIN</b></span>
+    </div>
+    <div class="boot-progress">
+      <div class="boot-bar" id="bootBar"></div>
+    </div>
+    <div class="boot-text" id="bootText">INITIALIZING WORLD...</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- LOADING OVERLAY -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">Loading...</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TOP BAR -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="brand-btn" onclick="NXT.ui && NXT.ui.openMenu && NXT.ui.openMenu()">
+      <div class="brand-icon">🌍</div>
+      <div class="brand-text">
+        <span class="brand-name">NXT WORLD</span>
+        <span class="brand-tag">Living Reality</span>
+      </div>
+    </button>
+  </div>
+  
+  <div class="topbar-center">
+    <div class="topbar-stat">
+      <i class="fas fa-clock"></i>
+      <span id="topClock">--:--</span>
+    </div>
+    <div class="topbar-stat">
+      <i class="fas fa-calendar"></i>
+      <span id="topDate">Day 1</span>
+    </div>
+    <div class="topbar-stat">
+      <i class="fas fa-cloud-sun"></i>
+      <span id="topWeather">☀️ Clear</span>
+    </div>
+    <div class="topbar-stat">
+      <i class="fas fa-users"></i>
+      <span id="topPop">0</span>
+    </div>
+  </div>
+  
+  <div class="topbar-right">
+    <button class="topbar-btn" onclick="NXT.recording && NXT.recording.toggle && NXT.recording.toggle()" title="Record">
+      <i class="fas fa-video"></i>
+    </button>
+    <button class="topbar-btn" onclick="NXT.ui && NXT.ui.toggleMap && NXT.ui.toggleMap()" title="Map">
+      <i class="fas fa-map"></i>
+    </button>
+    <button class="topbar-btn" onclick="NXT.ui && NXT.ui.toggleSettings && NXT.ui.toggleSettings()" title="Settings">
+      <i class="fas fa-cog"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MAIN CANVAS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="game-container" id="gameContainer">
+  <canvas id="worldCanvas"></canvas>
+  
+  <div class="vignette"></div>
+  
+  <div class="weather-overlay" id="weatherOverlay"></div>
+  
+  <div class="crosshair" id="crosshair"></div>
+  
+  <div class="minimap" id="minimap">
+    <div class="minimap-header">
+      <i class="fas fa-map"></i>
+      <span>MAP</span>
+    </div>
+    <canvas id="minimapCanvas" width="180" height="180"></canvas>
+  </div>
+  
+  <div class="time-controls">
+    <button class="time-btn" id="timeBtn" onclick="NXT.time && NXT.time.toggleMode && NXT.time.toggleMode()">
+      <i class="fas fa-clock"></i>
+      <span>Real</span>
+    </button>
+  </div>
+  
+  <div class="speed-indicator" id="speedIndicator">
+    <i class="fas fa-walking"></i>
+    <span>Walking</span>
+  </div>
+  
+  <div class="rec-indicator" id="recIndicator">
+    <span class="rec-dot"></span>
+    <span>REC</span>
+    <span id="recTimer">00:00</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- BOTTOM HUD -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="bottom-hud">
+  
+  <div class="location-info">
+    <div class="loc-icon">📍</div>
+    <div class="loc-details">
+      <div class="loc-name" id="locName">Village Center</div>
+      <div class="loc-sub" id="locSub">North District</div>
+    </div>
+  </div>
+  
+  <div class="action-buttons">
+    <button class="action-btn" onclick="NXT.player && NXT.player.toggleWalk && NXT.player.toggleWalk()" id="walkBtn" title="Walk">
+      <i class="fas fa-walking"></i>
+      <span>Walk</span>
+    </button>
+    <button class="action-btn" onclick="NXT.recording && NXT.recording.toggle && NXT.recording.toggle()" id="recBtn" title="Record">
+      <i class="fas fa-video"></i>
+      <span>Record</span>
+    </button>
+    <button class="action-btn" onclick="NXT.cinematic && NXT.cinematic.enter && NXT.cinematic.enter()" id="cineBtn" title="Cinematic">
+      <i class="fas fa-film"></i>
+      <span>Cinema</span>
+    </button>
+    <button class="action-btn" onclick="NXT.camera && NXT.camera.togglePhotoMode && NXT.camera.togglePhotoMode()" id="photoBtn" title="Photo">
+      <i class="fas fa-camera"></i>
+      <span>Photo</span>
+    </button>
+    <button class="action-btn" onclick="NXT.ui && NXT.ui.toggleInfo && NXT.ui.toggleInfo()" id="infoBtn" title="Info">
+      <i class="fas fa-info-circle"></i>
+      <span>Info</span>
+    </button>
+  </div>
+  
+  <div class="movement-help" id="movementHelp">
+    <div class="help-key">W</div>
+    <div class="help-key">A</div>
+    <div class="help-key">S</div>
+    <div class="help-key">D</div>
+    <div class="help-label">Move</div>
+  </div>
+  
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MOBILE CONTROLS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="mobile-controls" id="mobileControls">
+  <div class="joystick-container left" id="moveJoystick">
+    <div class="joystick-base">
+      <div class="joystick-knob"></div>
+    </div>
+  </div>
+  <div class="look-area" id="lookArea"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SIDE PANEL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<aside class="side-panel" id="sidePanel">
+  <div class="side-panel-header">
+    <h3 id="sidePanelTitle">Info</h3>
+    <button onclick="NXT.ui && NXT.ui.closeSidePanel && NXT.ui.closeSidePanel()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="side-panel-body" id="sidePanelBody"></div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MODAL SYSTEM -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="NXT.ui && NXT.ui.closeModal && NXT.ui.closeModal(event)">
+  <div class="modal" id="modalContent" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="modalTitle">Title</h2>
+      <button onclick="NXT.ui && NXT.ui.closeModal && NXT.ui.closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SETTINGS MODAL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="settingsModal" onclick="NXT.ui && NXT.ui.closeSettings && NXT.ui.closeSettings(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>⚙️ Settings</h2>
+      <button onclick="NXT.ui && NXT.ui.closeSettings && NXT.ui.closeSettings()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-tab="graphics" onclick="NXT.ui && NXT.ui.switchTab && NXT.ui.switchTab('graphics')">Graphics</button>
+        <button class="settings-tab" data-tab="audio" onclick="NXT.ui && NXT.ui.switchTab && NXT.ui.switchTab('audio')">Audio</button>
+        <button class="settings-tab" data-tab="world" onclick="NXT.ui && NXT.ui.switchTab && NXT.ui.switchTab('world')">World</button>
+        <button class="settings-tab" data-tab="save" onclick="NXT.ui && NXT.ui.switchTab && NXT.ui.switchTab('save')">Save</button>
+      </div>
+      
+      <div class="settings-panel active" id="tab-graphics">
+        <label>Quality
+          <select id="qualitySelect" onchange="NXT.config && NXT.config.set && NXT.config.set('quality', this.value)">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="ultra">Ultra</option>
+          </select>
+        </label>
+        <label>Show Grid
+          <input type="checkbox" id="showGrid" onchange="NXT.config && NXT.config.set && NXT.config.set('showGrid', this.checked)">
+        </label>
+        <label>Show Names
+          <input type="checkbox" id="showNames" onchange="NXT.config && NXT.config.set && NXT.config.set('showNames', this.checked)">
+        </label>
+      </div>
+      
+      <div class="settings-panel" id="tab-audio">
+        <label>Master Volume
+          <input type="range" id="masterVolume" min="0" max="100" value="80">
+        </label>
+        <label>Ambient Volume
+          <input type="range" id="ambientVolume" min="0" max="100" value="60">
+        </label>
+      </div>
+      
+      <div class="settings-panel" id="tab-world">
+        <label>Time Mode
+          <select id="timeModeSelect">
+            <option value="real" selected>Real-Time (1x)</option>
+            <option value="fast">Fast (2x)</option>
+            <option value="faster">Faster (5x)</option>
+            <option value="fastest">Fastest (10x)</option>
+          </select>
+        </label>
+        <label>Weather Mode
+          <select id="weatherModeSelect">
+            <option value="real">Real World Weather</option>
+            <option value="natural" selected>Natural Simulation</option>
+            <option value="sunny">Always Sunny</option>
+            <option value="rainy">Always Rainy</option>
+          </select>
+        </label>
+      </div>
+      
+      <div class="settings-panel" id="tab-save">
+        <button class="save-btn" onclick="NXT.save && NXT.save.save && NXT.save.save()">
+          <i class="fas fa-save"></i> Save World
+        </button>
+        <button class="save-btn" onclick="NXT.save && NXT.save.load && NXT.save.load()">
+          <i class="fas fa-folder-open"></i> Load World
+        </button>
+        <button class="save-btn" onclick="NXT.save && NXT.save.export && NXT.save.export()">
+          <i class="fas fa-download"></i> Export
+        </button>
+        <button class="save-btn danger" onclick="NXT.save && NXT.save.reset && NXT.save.reset()">
+          <i class="fas fa-trash"></i> Reset World
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MAP MODAL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="mapModal" onclick="NXT.ui && NXT.ui.closeMap && NXT.ui.closeMap(event)">
+  <div class="modal map-modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>🗺️ World Map</h2>
+      <button onclick="NXT.ui && NXT.ui.closeMap && NXT.ui.closeMap()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body map-body">
+      <canvas id="fullMapCanvas" width="700" height="700"></canvas>
+      <div class="map-legend">
+        <span><i style="background:#22c55e"></i> Nature</span>
+        <span><i style="background:#3b82f6"></i> Water</span>
+        <span><i style="background:#f59e0b"></i> Buildings</span>
+        <span><i style="background:#ef4444"></i> You</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- GALLERY MODAL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="galleryModal" onclick="NXT.ui && NXT.ui.closeGallery && NXT.ui.closeGallery(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>📹 Gallery</h2>
+      <button onclick="NXT.ui && NXT.ui.closeGallery && NXT.ui.closeGallery()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="galleryBody">
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TOAST -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- DEBUG INFO -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="debug-info" id="debugInfo">
+  <div>FPS: <span id="dbgFps">60</span></div>
+  <div>Modules: <span id="dbgModules">0</span></div>
+  <div>Citizens: <span id="dbgCitizens">0</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ALL MODULE SCRIPTS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<!-- Core -->
+<script src="js/config.js"></script>
+<script src="js/core.js"></script>
+
+<!-- World -->
+<script src="js/world.js"></script>
+<script src="js/terrain.js"></script>
+<script src="js/buildings.js"></script>
+<script src="js/roads.js"></script>
+<script src="js/nature.js"></script>
+
+<!-- People -->
+<script src="js/citizen.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/schedule.js"></script>
+<script src="js/relationships.js"></script>
+
+<!-- Systems -->
+<script src="js/time.js"></script>
+<script src="js/weather.js"></script>
+
+<!-- Player -->
+<script src="js/player.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/recording.js"></script>
+<script src="js/cinematic.js"></script>
+
+<!-- UI -->
+<script src="js/ui.js"></script>
+<script src="js/gallery.js"></script>
+
+<!-- Final -->
+<script src="js/game.js"></script>
+
+</body>
+</html>
