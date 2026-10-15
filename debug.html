@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NXT DEBUG TEST</title>
+<style>
+body {
+  background: #0a0e1a;
+  color: #00ff41;
+  font-family: monospace;
+  padding: 20px;
+  margin: 0;
+}
+h1 { color: #00d4ff; }
+.test {
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #1a4a22;
+  background: rgba(0,255,65,0.05);
+}
+.ok { color: #22c55e; border-color: #22c55e; }
+.fail { color: #ef4444; border-color: #ef4444; }
+.info { color: #ffd700; }
+#log {
+  background: #000;
+  padding: 12px;
+  border-radius: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  border: 1px solid #1a4a22;
+  margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<h1>🔧 NXT DEBUG TEST</h1>
+<p>চেক করা হচ্ছে সব ফাইল load হচ্ছে কিনা...</p>
+
+<div id="results"></div>
+<div id="log"></div>
+
+<script>
+var logEl = document.getElementById('log');
+var resultsEl = document.getElementById('results');
+
+function log(msg, cls) {
+  var div = document.createElement('div');
+  if (cls) div.className = cls;
+  div.textContent = msg;
+  logEl.appendChild(div);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function result(name, ok, info) {
+  var div = document.createElement('div');
+  div.className = 'test ' + (ok ? 'ok' : 'fail');
+  div.innerHTML = (ok ? '✅ ' : '❌ ') + name + (info ? ' <span class="info">— ' + info + '</span>' : '');
+  resultsEl.appendChild(div);
+  log((ok ? '✅ ' : '❌ ') + name + (info ? ' — ' + info : ''));
+}
+
+// Test 1: Basic JS
+try {
+  var test = 1 + 1;
+  result('JavaScript works', test === 2, '1+1=' + test);
+} catch(e) {
+  result('JavaScript works', false, e.message);
+}
+
+// Test 2: Canvas API
+try {
+  var c = document.createElement('canvas');
+  var ctx = c.getContext('2d');
+  result('Canvas API works', !!ctx, 'context created');
+} catch(e) {
+  result('Canvas API works', false, e.message);
+}
+
+// Test 3: LocalStorage
+try {
+  localStorage.setItem('test', 'ok');
+  var val = localStorage.getItem('test');
+  localStorage.removeItem('test');
+  result('localStorage works', val === 'ok');
+} catch(e) {
+  result('localStorage works', false, e.message);
+}
+
+// Test 4: MediaRecorder
+if (typeof MediaRecorder !== 'undefined') {
+  result('MediaRecorder available', true);
+} else {
+  result('MediaRecorder available', false, 'not supported');
+}
+
+// Test 5: Load all JS files
+var files = [
+  'js/config.js',
+  'js/core.js',
+  'js/world.js',
+  'js/terrain.js',
+  'js/buildings.js',
+  'js/roads.js',
+  'js/nature.js',
+  'js/citizen.js',
+  'js/ai.js',
+  'js/schedule.js',
+  'js/time.js',
+  'js/weather.js',
+  'js/player.js',
+  'js/camera.js',
+  'js/recording.js',
+  'js/cinematic.js',
+  'js/ui.js',
+  'js/gallery.js',
+  'js/render.js',
+  'js/game.js'
+];
+
+var loaded = 0;
+var failed = 0;
+
+files.forEach(function(file) {
+  var script = document.createElement('script');
+  script.src = file;
+  script.onload = function() {
+    loaded++;
+    result('Load: ' + file, true);
+    checkDone();
+  };
+  script.onerror = function() {
+    failed++;
+    result('Load: ' + file, false, '404 NOT FOUND');
+    checkDone();
+  };
+  document.body.appendChild(script);
+});
+
+function checkDone() {
+  if (loaded + failed === files.length) {
+    setTimeout(function() {
+      log('');
+      log('═══════════════════════════════════');
+      log('📊 FINAL RESULTS');
+      log('═══════════════════════════════════');
+      log('✅ Loaded: ' + loaded + ' / ' + files.length);
+      log('❌ Failed: ' + failed + ' / ' + files.length);
+      log('');
+      
+      if (typeof NXT !== 'undefined') {
+        log('✅ NXT object exists');
+        log('   Version: ' + NXT.version);
+        log('   Modules: ' + NXT.count());
+        log('   Modules list: ' + NXT.list().join(', '));
+      } else {
+        log('❌ NXT object NOT defined');
+      }
+      
+      log('');
+      log('⏳ Waiting 3 seconds to see if game boots...');
+      
+      setTimeout(function() {
+        if (typeof NXT !== 'undefined') {
+          log('');
+          log('📊 After 3 seconds:');
+          log('   Modules: ' + NXT.count());
+          log('   Booted: ' + NXT.state.booted);
+          log('   Frame: ' + NXT.state.frame);
+          log('   FPS: ' + NXT.state.fps);
+        }
+      }, 3000);
+    }, 500);
+  }
+}
+
+log('🚀 Test started...');
+log('Loading ' + files.length + ' files...');
+log('');
+</script>
+
+</body>
+</html>
